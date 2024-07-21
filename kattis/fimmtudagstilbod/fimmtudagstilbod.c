@@ -1,16 +1,34 @@
-#define start_year 2020
-#define yearly_increase 100
-#include <stdio.h>
-#include <stdlib.h>
-int main(void) {
-    char buffer[10];
-    fgets(buffer, sizeof(buffer), stdin);
-    int end_year = atoi(buffer) - start_year;
-    if (end_year <= 0) {
-        end_year = 1000;
-    } else {
-        end_year = end_year * yearly_increase + 1000;
+void f1(struct fred_t *p)
+{
+    // dereference p and then check if it's NULL
+    int x = p->x;
+    if (p)
+        do_something(x);
+}
+
+void f2()
+{
+    const char *p = NULL;
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] == ' ')
+        {
+            p = str + i;
+            break;
+        }
     }
-    printf("%d\n", end_year);
-    return 0;
+
+    // p is NULL if str doesn't have a space. If str always has a
+    // a space then the condition (str[i] != '\0') would be redundant
+    return p[1];
+}
+
+void f3(int a)
+{
+    struct fred_t *p = NULL;
+    if (a == 1)
+        p = fred1;
+
+    // if a is not 1 then p is NULL
+    p->x = 0;
 }
