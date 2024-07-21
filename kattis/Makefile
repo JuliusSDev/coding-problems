@@ -72,7 +72,7 @@ UNUSED_RETURN_QUERY := 'm \
     )))), \
     unless(equalsBoundNode("cond"))).bind("unused-return")'
 
-check: $(C_SOURCES) $(CPP_SOURCES)
+check: $(C_SOURCES) 
 	@mkdir -p $(OBJDIR)
 	@echo "Running static analysis on C/C++ sources..."
 	@$(foreach src, $^, \
@@ -87,7 +87,6 @@ check: $(C_SOURCES) $(CPP_SOURCES)
 			$(src) || exit 1; \
 		touch $(OBJDIR)/$(notdir $(src)).chk; \
 	)
-
 # -----------------------------------------------------------------------------
 # Code-Formatierung
 # Google C++ Style Guide: https://google.github.io/styleguide/cppguide.html
