@@ -42,7 +42,7 @@ CXXFLAGS := $(CXXFLAGS) -Wall -Wextra -Wshadow -Wpedantic
 # -----------------------------------------------------------------------------
 # Statische Analyse
 
-CLANG_FLAGS := -target arm-none-eabi --sysroot "/usr/lib/arm-none-eabi" $(filter -D%,$(CFLAGS)) -I. $(filter -I %/, $(CFLAGS))
+CLANG_FLAGS := $(filter -D%,$(CFLAGS)) -I. $(filter -I %/, $(CFLAGS)) # -target arm-none-eabi --sysroot "/usr/lib/arm-none-eabi"
 
 UNUSED_RETURN_QUERY := 'm \
   callExpr( \
