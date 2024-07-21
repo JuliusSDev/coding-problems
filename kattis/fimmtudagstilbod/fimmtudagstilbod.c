@@ -1,7 +1,7 @@
 #define start_year 2020
 #define yearly_increase 100
 #include <stdio.h>
-#include "stdlib.h"
+#include <stdlib.h>
 int main(void) {
     char buffer[10];
     fgets(buffer, sizeof(buffer), stdin);
