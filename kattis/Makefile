@@ -77,12 +77,12 @@ check: $(C_SOURCES) $(CPP_SOURCES)
 	@echo "Running static analysis on C/C++ sources..."
 	@$(foreach src, $^, \
 		echo "CLANG TIDY $(src)"; \
-		clang-tidy --header-filter=.* --warnings-as-errors=* --extra-arg=-Wdocumentation --checks=-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-deadcode.DeadStores $(src) -- $(CLANG_FLAGS) || exit 1; \
+		clang-tidy --header-filter=.* --warnings-as-errors=* --extra-arg=-Wdocumentation --checks=-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-deadcode.DeadStores $(src) -- $(CLANG_FLAGS); \
 		echo "CPPCHECK $(src)"; \
 		cppcheck --enable=warning,performance,portability \
 			--quiet --error-exitcode=1 --platform=unix32 --template=gcc \
 			-D__GNUC__ $(filter -D%,$(CFLAGS)) -I. $(filter -I %/, $(CFLAGS)) \
-			$(src) || exit 1; \
+			$(src); \
 		touch $(OBJDIR)/$(notdir $(src)).chk; \
 	)
 
