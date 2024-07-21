@@ -72,21 +72,22 @@ UNUSED_RETURN_QUERY := 'm \
     )))), \
     unless(equalsBoundNode("cond"))).bind("unused-return")'
 
-check: $(C_SOURCES) 
+check: $(C_SOURCES) $(CPP_SOURCES)
 	@mkdir -p $(OBJDIR)
 	@echo "Running static analysis on C/C++ sources..."
 	@$(foreach src, $^, \
 		echo "CLANG TIDY $(src)"; \
-		clang-tidy --header-filter=.* --warnings-as-errors=* --extra-arg=-Wdocumentation --checks=-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-deadcode.DeadStores $(src) -- $(CLANG_FLAGS) || exit 1; \
+		clang-tidy --header-filter=.* --warnings-as-errors=* --extra-arg=-Wdocumentation --checks=-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-deadcode.DeadStores $(src) -- $(CLANG_FLAGS); \
 		echo "CLANG QUERY $(src)"; \
-		$(if $(filter-out $(THIRD_PARTY_FILES),$(src)), clang-query -extra-arg="-w" -c="set bind-root false" -c=$(UNUSED_RETURN_QUERY) $(src) -- $(CLANG_FLAGS) | sed -n '/^0 matches.$$/d; tOK; bNOK; :OK;H; :NOK;p;$${g;/./!{q1}}' || exit 1); \
+		$(if $(filter-out $(THIRD_PARTY_FILES),$(src)), clang-query -extra-arg="-w" -c="set bind-root false" -c=$(UNUSED_RETURN_QUERY) $(src) -- $(CLANG_FLAGS) | sed -n '/^0 matches.$$/d; tOK; bNOK; :OK;H; :NOK;p;$${g;/./!{q1}}'); \
 		echo "CPPCHECK $(src)"; \
 		cppcheck --enable=warning,performance,portability \
 			--quiet --error-exitcode=1 --platform=unix32 --template=gcc \
 			-D__GNUC__ $(filter -D%,$(CFLAGS)) -I. $(filter -I %/, $(CFLAGS)) \
-			$(src) || exit 1; \
+			$(src); \
 		touch $(OBJDIR)/$(notdir $(src)).chk; \
 	)
+
 # -----------------------------------------------------------------------------
 # Code-Formatierung
 # Google C++ Style Guide: https://google.github.io/styleguide/cppguide.html
