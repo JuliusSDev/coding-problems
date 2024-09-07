@@ -1,12 +1,19 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#define MAX_NUMBER_SIZE 5 /* Maximum input size is 10 000 */
+#define BASE_FOR_CONVERSION 10
+
 int main(void) {
-    char input_buffer[10];
+    // Get the input
+    char input_buffer[MAX_NUMBER_SIZE];
     fgets(input_buffer, sizeof(input_buffer), stdin);
-    int statues_to_print = atoi(input_buffer);
+
+    // Convert the input into an integer
+    char* endpointer = NULL; /* Needed for strtol */
+    int statues_to_print = (int)strtol(input_buffer, &endpointer, BASE_FOR_CONVERSION);
+
     int printers = 1;
-    int optimum = statues_to_print;
     int timestamps = 0;
     int statues_printed = 0;
 
