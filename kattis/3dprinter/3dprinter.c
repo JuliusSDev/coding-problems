@@ -1,5 +1,5 @@
-#include "stdio.h"
-#include "stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_NUMBER_SIZE 5 /* Maximum input size is 10 000 */
 #define BASE_FOR_CONVERSION 10
