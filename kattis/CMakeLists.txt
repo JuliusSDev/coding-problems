@@ -15,7 +15,7 @@ endif()
 set(CMAKE_CXX_CPPCHECK "cppcheck;--enable=all")
 
 # Enable clang-tidy and treat warnings as errors
-set(CMAKE_C_CLANG_TIDY "clang-tidy;-checks=*;-warnings-as-errors=*")
+set(CMAKE_C_CLANG_TIDY "clang-tidy-12;-checks=*;-warnings-as-errors=*")
 
 # Get a list of all subdirectories in the current directory (assuming each subdirectory is a project)
 file(GLOB SUBDIRS RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*)
