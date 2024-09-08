@@ -11,7 +11,8 @@ int main(void) {
 
     // Convert the input into an integer
     char* endpointer = NULL; /* Needed for strtol */
-    int statues_to_print = (int)strtol(input_buffer, &endpointer, BASE_FOR_CONVERSION);
+    int statues_to_print =
+        (int)strtol(input_buffer, &endpointer, BASE_FOR_CONVERSION);
 
     int printers = 1;
     int timestamps = 0;
