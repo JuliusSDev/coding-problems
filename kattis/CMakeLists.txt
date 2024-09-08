@@ -1,41 +1,54 @@
-# Minimum version of CMake required
 cmake_minimum_required(VERSION 3.10)
 
-# Project name
-project(CompileSubdirectories C)
+project(my_project)
 
-# Set warnings as errors for GCC, Clang, and MSVC
-if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    add_compile_options(-Wall -Wextra -Werror)
-elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(/W4 /WX)
-endif()
+# Collect all .c files recursively in subdirectories
+file(GLOB_RECURSE C_SOURCES CONFIGURE_DEPENDS "*.c")
 
-# Enable cppcheck for static analysis
-set(CMAKE_CXX_CPPCHECK "cppcheck;--enable=all")
+# Exclude directories if needed
+list(FILTER C_SOURCES EXCLUDE REGEX "path/to/exclude")
 
-# Enable clang-tidy and treat warnings as errors
-set(CMAKE_C_CLANG_TIDY "clang-tidy-12;-checks=*;-warnings-as-errors=*")
+# Set compiler warnings and flags
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror")
 
-# Get a list of all subdirectories in the current directory (assuming each subdirectory is a project)
-file(GLOB SUBDIRS RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*)
+# clang-tidy checks (disabling restrictive system libc check)
+set(CMAKE_C_CLANG_TIDY "clang-tidy-12;-checks=*,-llvmlibc-restrict-system-libc-headers;-warnings-as-errors=*")
 
-# Set the output directory for the object files
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# clang-format check (dry run)
+add_custom_target(check-format ALL
+    COMMENT "Running clang-format check on all C source files"
+)
 
-# Loop through each subdirectory
-foreach(SUBDIR ${SUBDIRS})
-    # Check if the subdirectory contains C source files
-    file(GLOB_RECURSE C_FILES "${CMAKE_SOURCE_DIR}/${SUBDIR}/*.c")
-    
-    # If .c files are found in the subdirectory, treat it as a project
-    if(C_FILES)
-        # Create an executable for each subdirectory
-        add_executable(${SUBDIR}_exec ${C_FILES})
+foreach(cfile ${C_SOURCES})
+    # Get the file name without the directory path
+    get_filename_component(cfile_name ${cfile} NAME)
 
-        # Set the output directory for this executable
-        set_target_properties(${SUBDIR}_exec PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        )
-    endif()
+    # Create a valid target name by using the file name without slashes
+    set(target_name "${cfile_name}_format")
+
+    add_custom_command(
+        OUTPUT ${cfile}.format
+        COMMAND clang-format -Werror -n -style='{BasedOnStyle: Google, IndentWidth: 4}' ${cfile}
+        DEPENDS ${cfile}
+        COMMENT "Checking format for ${cfile}"
+    )
+
+    add_custom_target(${target_name} DEPENDS ${cfile}.format)
+    add_dependencies(check-format ${target_name})
+endforeach()
+
+# Add a custom target for running 'clang-format -i' to format all .c files
+add_custom_target(format
+    COMMAND clang-format -i -style='{BasedOnStyle: Google, IndentWidth: 4}' ${C_SOURCES}
+    COMMENT "Formatting all C source files with clang-format"
+)
+
+# Add executables for each directory
+foreach(cfile ${C_SOURCES})
+    get_filename_component(exe_name ${cfile} NAME_WE)
+    add_executable(${exe_name}_exec ${cfile})
+    set_target_properties(${exe_name}_exec PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    )
 endforeach()
