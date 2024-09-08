@@ -6,7 +6,7 @@ project(my_project)
 file(GLOB_RECURSE C_SOURCES CONFIGURE_DEPENDS "*.c")
 
 # Exclude directories if needed
-list(FILTER C_SOURCES EXCLUDE REGEX "path/to/exclude")
+list(FILTER C_SOURCES EXCLUDE REGEX ".*/(CMakeFiles|build|bin)/.*")
 
 # Set compiler warnings and flags
 set(CMAKE_C_STANDARD 11)
