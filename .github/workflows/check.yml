@@ -21,7 +21,7 @@ jobs:
     - name: Set up GCC and other tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake make build-essential clang clang-tidy cppcheck clang-format gcc g++ libc++-dev
+        sudo apt-get install -y cmake make build-essential clang clang-tidy-12 cppcheck clang-format gcc g++ libc++-dev
 
     - name: Run make check
       run: |
