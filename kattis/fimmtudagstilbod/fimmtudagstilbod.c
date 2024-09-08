@@ -1,16 +1,25 @@
-#define start_year 2020
-#define yearly_increase 100
 #include "stdio.h"
 #include "stdlib.h"
+
+#define START_YEAR 2020
+#define YEARLY_INCREASE 100
+#define START_PRICE 1000
+#define MAX_INPUT_SIZE 5   /* Maximum input number is 9 999 */
+#define CONVERSION_BASE 10 /* Use the decimal system */
+
 int main(void) {
-    char buffer[10];
+    char buffer[MAX_INPUT_SIZE];
     fgets(buffer, sizeof(buffer), stdin);
-    int end_year = atoi(buffer) - start_year;
+
+    char *endptr = NULL;
+    int end_year = (int)strtol(buffer, &endptr, CONVERSION_BASE) - START_YEAR;
+
     if (end_year <= 0) {
-        end_year = 1000;
+        end_year = START_PRICE;
     } else {
-        end_year = end_year * yearly_increase + 1000;
+        end_year = START_PRICE + end_year * YEARLY_INCREASE;
     }
+
     printf("%d\n", end_year);
     return 0;
 }
